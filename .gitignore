@@ -1,0 +1,5 @@
+coursework/
+.ipynb_checkpoints/
+__pycache__/
+exercises/
+.idea/

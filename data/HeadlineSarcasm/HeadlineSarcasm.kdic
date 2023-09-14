@@ -1,0 +1,14 @@
+Root Dictionary Headline(HeadlineId)
+{
+  Categorical HeadlineId;
+  Categorical IsSarcasm;
+  Table(Words) HeadlineWords;
+};
+
+Dictionary Words(HeadlineId)
+{
+  Categorical HeadlineId;
+  Numerical Position;
+  Categorical Word;
+};
+

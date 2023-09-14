@@ -1,0 +1,6 @@
+Dictionary	Athletes
+{
+	Categorical	Name;
+	Categorical	Country;
+	Categorical	Discipline;
+};

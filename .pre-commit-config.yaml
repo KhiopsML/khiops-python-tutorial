@@ -1,0 +1,15 @@
+repos:
+  - repo: https://github.com/psf/black
+    rev: 22.10.0
+    hooks:
+      - id: black
+        language_version: python3.9
+      - id: black-jupyter
+        language_version: python3.9
+  - repo: local
+    hooks:
+      - id: my-nb-clean
+        name: Customized notebook cleaning
+        entry: python scripts/my-nb-clean.py
+        language: system
+        files: '.*\.ipynb'
