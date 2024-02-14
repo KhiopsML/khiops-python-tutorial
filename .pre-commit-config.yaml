@@ -9,7 +9,7 @@ repos:
   - repo: local
     hooks:
       - id: my-nb-clean
-        name: Customized notebook cleaning
+        name: custom-nb-clean
         entry: python scripts/my-nb-clean.py
         language: system
         files: '.*\.ipynb'
