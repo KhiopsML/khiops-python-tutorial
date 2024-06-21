@@ -1,0 +1,51 @@
+---
+name: Quick Checks
+env:
+  KHIOPS_PYTHON_REVISION: 171-implement-multi-table-helper-functions
+on:
+  pull_request:
+  workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install khiops-python dev dependencies
+        run: |
+          pip install pre-commit
+      - name: Run pre-commit checks
+        uses: pre-commit/action@v3.0.1
+
+  execute-nb:
+    runs-on: ubuntu-22.04
+    container:
+      image: ghcr.io/khiopsml/khiops-python/khiopspydev-ubuntu22.04:latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+      - name: Install pre-requisites
+        run: |
+          pip install nbconvert nbformat jupyter
+      - name: Install khiops-python
+        run: |
+          git clone https://github.com/khiopsml/khiops-python
+          cd khiops-python
+          git switch $KHIOPS_PYTHON_REVISION
+          pip install .
+          kh-status
+          kh-download-datasets
+      - name: Execute the convert hook
+        run: |
+          mkdir output_nb
+          export KHIOPS_PROC_NUMBER=1
+          python khiops-python/doc/convert_tutorials.py --execute-notebooks ./ output_nb
+          ls -ltr output_nb
