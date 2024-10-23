@@ -14,9 +14,6 @@ def main():
     os.mkdir(coursework_dir_path)
 
     print("Creating resources ...")
-    helper_functions_path = os.path.join(".", "./helper_functions.py")
-    shutil.copy(helper_functions_path, coursework_dir_path)
-
     data_dir_path = os.path.join(".", "data")
     coursework_data_dir_path = os.path.join(coursework_dir_path, "data")
     shutil.copytree(data_dir_path, coursework_data_dir_path)
