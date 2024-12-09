@@ -1,7 +1,7 @@
 ---
 name: Quick Checks
 env:
-  KHIOPS_PYTHON_REVISION: 171-implement-multi-table-helper-functions
+  KHIOPS_PYTHON_REVISION: dev
 on:
   pull_request:
   workflow_dispatch:
@@ -28,7 +28,7 @@ jobs:
   execute-nb:
     runs-on: ubuntu-22.04
     container:
-      image: ghcr.io/khiopsml/khiops-python/khiopspydev-ubuntu22.04:10.2.3-b.5.0
+      image: ghcr.io/khiopsml/khiops-python/khiopspydev-ubuntu22.04:10.2.3.0
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
