@@ -1,14 +1,21 @@
 ---
 name: Quick Checks
 env:
-  KHIOPS_PYTHON_REVISION: dev
+  DEFAULT_KHIOPS_PYTHON_REVISION: 10.6.0.0-a.0
 on:
   pull_request:
   workflow_dispatch:
+    inputs:
+      khiops-python-revision:
+        default: 10.6.0.0-a.0
+        description: Git tag/branch/commit for the khiops-python repository
+      image-tag:
+        default: 10.6.0-b.0.0
+        description: Development Docker Image Tag
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref
+    }}
   cancel-in-progress: true
-
 jobs:
   pre-commit:
     runs-on: ubuntu-latest
@@ -18,33 +25,39 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.12'
       - name: Install khiops-python dev dependencies
         run: |
           pip install pre-commit
       - name: Run pre-commit checks
         uses: pre-commit/action@v3.0.1
-
   execute-nb:
     runs-on: ubuntu-22.04
     container:
-      image: ghcr.io/khiopsml/khiops-python/khiopspydev-ubuntu22.04:10.2.3.1
+      # 'latest' default image tag cannot be set as an environment variable,
+      # because the `env` context is only accessible at the step level;
+      # hence, it is hard-coded
+      image: ghcr.io/khiopsml/khiops-python/khiopspydev-ubuntu22.04:${{ inputs.image-tag || '10.6.0-b.0.0' }}
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
       - name: Install pre-requisites
         run: |
           pip install nbconvert nbformat jupyter
+      - name: Put the khiops-python version in the environment
+        run: |
+          KHIOPS_PYTHON_REVISION="${{ inputs.khiops-python-revision || env.DEFAULT_KHIOPS_PYTHON_REVISION }}"
+          echo "KHIOPS_PYTHON_REVISION=${KHIOPS_PYTHON_REVISION}" >> "$GITHUB_ENV"
       - name: Install khiops-python
         run: |
           git clone https://github.com/khiopsml/khiops-python
           cd khiops-python
-          git switch $KHIOPS_PYTHON_REVISION
+          git checkout $KHIOPS_PYTHON_REVISION
           pip install .
           kh-status
           kh-download-datasets --version 10.2.4
       - name: Execute the convert hook
-        run: |
+        run: |-
           mkdir output_nb
           export KHIOPS_PROC_NUMBER=1
           python khiops-python/doc/convert_tutorials.py --execute-notebooks ./ output_nb
