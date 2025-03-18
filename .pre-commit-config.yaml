@@ -1,13 +1,20 @@
+---
 repos:
   - repo: https://github.com/psf/black
     rev: 22.10.0
     hooks:
       - id: black
       - id: black-jupyter
+  - repo: https://github.com/lyz-code/yamlfix/
+    rev: 1.17.0
+    hooks:
+      - id: yamlfix
+        exclude: packaging/conda/meta.yaml
+        language: python
   - repo: local
     hooks:
       - id: my-nb-clean
         name: custom-nb-clean
         entry: python scripts/my-nb-clean.py
         language: system
-        files: '.*\.ipynb'
+        files: .*\.ipynb
