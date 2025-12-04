@@ -10,7 +10,7 @@ on:
         default: dev
         description: Git tag/branch/commit for the khiops-python repository
       image-tag:
-        default: 11.0.0-a.0.0
+        default: 11.0.0-rc.2.0
         description: Development Docker Image Tag
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref
@@ -37,7 +37,7 @@ jobs:
       # 'latest' default image tag cannot be set as an environment variable,
       # because the `env` context is only accessible at the step level;
       # hence, it is hard-coded
-      image: ghcr.io/khiopsml/khiops-python/khiopspydev-ubuntu22.04:${{ inputs.image-tag || '11.0.0-a.0.0' }}
+      image: ghcr.io/khiopsml/khiops-python/khiopspydev-ubuntu22.04:${{ inputs.image-tag || '11.0.0-rc.2.0' }}
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
