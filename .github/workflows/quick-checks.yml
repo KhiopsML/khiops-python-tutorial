@@ -53,7 +53,18 @@ jobs:
           git clone https://github.com/khiopsml/khiops-python
           cd khiops-python
           git checkout $KHIOPS_PYTHON_REVISION
-          pip install .
+
+          # Allow Pip to write to its cache
+          mkdir -p /github/home/.cache/pip
+          chown -R $(whoami) /github/home/.cache/pip
+
+          # Build Pip package
+          pip install --upgrade pip
+          pip install build
+          python -m build --sdist
+
+          # Install Pip package
+          pip install $(ls dist/khiops*.tar.gz)
           kh-status
           kh-download-datasets --version 11.0.0
       - name: Execute the convert hook
